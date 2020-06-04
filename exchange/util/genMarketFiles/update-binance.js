@@ -12,7 +12,7 @@ let getOrderMinSize = currency => {
 };
 
 const options = {
-  url: 'https://www.binance.com/exchange/public/product',
+  url: 'https://www.binance.com/exchange-api/v1/public/asset-service/product/get-products',
   headers: {
     Connection: 'keep-alive',
     'User-Agent': 'Request-Promise',
@@ -26,15 +26,15 @@ request(options)
       throw new Error('Unable to fetch product list, response was empty');
     }
 
-    let assets = _.uniqBy(_.map(body.data, market => market.baseAsset));
-    let currencies = _.uniqBy(_.map(body.data, market => market.quoteAsset));
+    let assets = _.uniqBy(_.map(body.data, market => market.b));
+    let currencies = _.uniqBy(_.map(body.data, market => market.q));
     let pairs = _.map(body.data, market => {
       return {
-        pair: [market.quoteAsset, market.baseAsset],
+        pair: [market.q, market.b],
         minimalOrder: {
-          amount: parseFloat(market.minTrade),
-          price: parseFloat(market.tickSize),
-          order: getOrderMinSize(market.quoteAsset),
+          amount: parseFloat(market.i),
+          price: parseFloat(market.ts),
+          order: getOrderMinSize(market.q),
         },
       };
     });
